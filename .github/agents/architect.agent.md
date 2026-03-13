@@ -34,6 +34,19 @@ After the initial discovery step, classify the repository into one or more strea
 - If the codebase is a **monorepo**, detect streams per package/workspace and delegate accordingly.
 - If a stream is ambiguous (e.g., a fullstack Next.js app), delegate to both `frontend-analyst` and `backend-analyst` with scoped paths.
 
+## Error Handling
+
+Handle these failure conditions gracefully — never silently skip a step or produce a partial blueprint without noting what was missing.
+
+| Failure | Action |
+|---|---|
+| Path does not exist | Stop. Report: `"The path '<path>' does not exist or is not accessible. Please verify the directory and try again."` |
+| No streams detected | Stop. Report which signals were checked and that none matched. Ask the user to confirm the path or specify a stream scope manually. |
+| Sub-agent returns empty report | Note the failure inline in the relevant section of `docs/architecture.md` (e.g., `> ⚠️ frontend-analyst returned no results for this path.`). Continue synthesis with the reports that did succeed. |
+| Sub-agent fails entirely | Log the failure. Proceed with remaining sub-agents. Include a warning at the top of `docs/architecture.md` listing which streams could not be analysed. |
+| Mermaid syntax error detected | Fix the syntax before writing output. Common issues: unclosed brackets `[]`, reserved keyword node IDs (e.g., `end`, `class`), missing quotes on labels containing spaces. |
+| Output file write fails | Report the write error to the user. Do not silently discard the output — print the blueprint to the conversation as a fallback. |
+
 ## Constraints
 
 - DO NOT modify, refactor, or suggest changes to source code — this is a read-only analysis role
@@ -43,12 +56,12 @@ After the initial discovery step, classify the repository into one or more strea
 
 ## Approach
 
-1. **Discover**: Use search and directory listing to understand the repo layout — identify entry points, config files, package manifests, and folder conventions
-2. **Classify streams**: Determine which of Frontend / Backend / Data streams are present using the detection signals table above
-3. **Delegate**: Invoke the appropriate specialist sub-agents (`frontend-analyst`, `backend-analyst`, `data-analyst`) with scoped paths
-4. **Await reports**: Collect each sub-agent's structured report
-5. **Synthesize**: Merge the reports into a unified cross-stream blueprint — identify cross-cutting concerns, the contracts between streams, and overall system topology
-6. **Write output**: Save to `docs/architecture.md` unless the user requests inline output
+1. **Discover**: Use search and directory listing to understand the repo layout — identify entry points, config files, package manifests, and folder conventions. If the root path is inaccessible, stop and report immediately.
+2. **Classify streams**: Determine which of Frontend / Backend / Data streams are present using the detection signals table above. If no streams are detected, stop and report — do not produce an empty document.
+3. **Delegate**: Invoke the appropriate specialist sub-agents (`frontend-analyst`, `backend-analyst`, `data-analyst`) with scoped paths. If a sub-agent returns an empty or failed report, note it and continue with the others.
+4. **Await reports**: Collect each sub-agent's structured report. Track which succeeded and which failed.
+5. **Synthesize**: Merge the reports into a unified cross-stream blueprint — identify cross-cutting concerns, the contracts between streams, and overall system topology. Include a warnings section at the top if any sub-agent failed.
+6. **Write output**: Save to `docs/architecture.md` unless the user requests inline output. If writing fails, print the result to the conversation as a fallback.
 
 ## Output Format
 

@@ -16,6 +16,18 @@ You are the `architect` agent. Perform a full architectural blueprint analysis o
 
 > If no URL was supplied, use: `https://github.com/dotnet/eShop`
 
+## Error Handling
+
+| Failure | Condition | Action |
+|---|---|---|
+| Missing URL | `{{repo_url}}` is blank or not a valid `https://github.com/` URL | Warn the user, fall back to `https://github.com/dotnet/eShop`, and continue |
+| Clone failure | `git clone` exits non-zero (auth error, network error, repo not found) | Stop immediately. Report the exact error message. Ask the user to check the URL, ensure the repo is public, and that `git` is available in PATH. Do NOT proceed to analysis. |
+| Target path already exists | `.analysis/<repo-name>/` already exists from a prior run | Skip cloning. Notify the user the cached clone will be used. Proceed to Step 2. |
+| Empty clone | Clone succeeds but `.analysis/<repo-name>/` contains no files | Stop. Report that the repository appears to be empty and ask the user to verify. |
+| Write failure | `docs/` cannot be created or `docs/architecture.md` cannot be written | Report the write error. Ask the user to check workspace permissions. |
+
+---
+
 ## Steps
 
 ### 1 — Clone the Repository
@@ -28,6 +40,8 @@ git clone --depth=1 <repo_url> .analysis/<repo-name>
 
 Use `--depth=1` to avoid fetching full history. Set the working target path to `.analysis/<repo-name>/`.
 
+> **On failure**: If `git clone` returns an error, stop and report the failure to the user. Do not proceed to Step 2. See the Error Handling table above.
+
 ### 2 — Run the Architecture Blueprint Skill
 
 Invoke the `/architecture-blueprint` skill on the cloned path:
@@ -37,11 +51,15 @@ Invoke the `/architecture-blueprint` skill on the cloned path:
 - Let the skill auto-detect streams (Frontend / Backend / Data)
 - Allow delegation to `frontend-analyst`, `backend-analyst`, and `data-analyst` sub-agents as needed
 
+> **On failure**: If no streams are detected, report to the user that no recognisable technology signals were found and ask them to confirm the repository URL or specify a stream scope manually (e.g., `frontend only`).
+
 ### 3 — Save Output
 
 Write the full synthesized blueprint to `docs/architecture.md` in the current workspace using the structure in [architecture-template.md](../skills/architecture-blueprint/assets/architecture-template.md).
 
 Create `docs/` if it does not exist.
+
+> **On failure**: If the file cannot be written, report the error and ask the user to check workspace folder permissions.
 
 ### 4 — Confirm & Clean Up
 

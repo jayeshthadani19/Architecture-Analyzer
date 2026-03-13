@@ -49,6 +49,8 @@ Invoke each detected sub-agent with its scoped path. Pass:
 
 Collect the structured report from each sub-agent before proceeding.
 
+> **Error handling**: If a sub-agent returns an empty report or fails, do NOT abort the whole analysis. Record the failure, continue with the remaining sub-agents, and include a `> ⚠️ Warning` note in the relevant section of the output file.
+
 ### Step 4 — Synthesize
 
 Using the sub-agent reports, build the cross-stream view:
@@ -75,6 +77,8 @@ Save the final blueprint to `docs/architecture.md` using the structure in [archi
 
 If `docs/` does not exist, create it. Confirm the file path to the user when done.
 
+> **Error handling**: If the file cannot be written (permissions, read-only workspace), print the full blueprint content to the conversation as a fallback so the user does not lose the output.
+
 ## Quality Checklist
 
 Before finishing, verify:
@@ -85,3 +89,6 @@ Before finishing, verify:
 - [ ] No speculation — every claim in the doc traces to a file read during analysis
 - [ ] Cross-stream contracts section is present if more than one stream was detected
 - [ ] Output saved to `docs/architecture.md` (or acknowledged as inline per user request)
+- [ ] Any sub-agent failures are documented with a `⚠️ Warning` note in the output
+- [ ] If no streams were detected, the user was notified and analysis was not silently aborted
+- [ ] If output write failed, the blueprint was printed to the conversation as a fallback
