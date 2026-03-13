@@ -10,7 +10,7 @@ Point the agent at any public GitHub repository and it will:
 
 - Detect technology streams present (Frontend, Backend, Data)
 - Delegate deep analysis to specialist sub-agents per stream
-- Synthesize the results into a unified `docs/architecture.md`
+- Synthesize the results into a unified [`docs/architecture.md`](docs/architecture.md)
 - Generate Mermaid component diagrams, sequence diagrams, and ER diagrams
 - Document all API endpoints with method, path, auth, and description
 - Trace authentication flows, inter-service contracts, and shared schemas
@@ -116,7 +116,9 @@ The generated `docs/architecture.md` follows this structure:
 
 ## Example Output
 
-`docs/architecture.md` contains a full blueprint of [dotnet/eShop](https://github.com/dotnet/eShop) — a cloud-native microservices eCommerce reference app built on .NET 10 and .NET Aspire. It includes:
+> **See the full generated output: [docs/architecture.md](docs/architecture.md)**
+
+[docs/architecture.md](docs/architecture.md) contains a full blueprint of [dotnet/eShop](https://github.com/dotnet/eShop) — a cloud-native microservices eCommerce reference app built on .NET 10 and .NET Aspire. It includes:
 
 - Top-level system graph with all 7 backend services, 2 frontends, RabbitMQ event bus, PostgreSQL, and Redis
 - Blazor component hierarchy for the WebApp
