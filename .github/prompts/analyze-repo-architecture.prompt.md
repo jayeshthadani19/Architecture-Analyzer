@@ -33,7 +33,7 @@ Use `--depth=1` to avoid fetching full history. Set the working target path to `
 Invoke the `/architecture-blueprint` skill on the cloned path:
 
 - Pass `.analysis/<repo-name>/` as the root path
-- architect.agent is the main agent that will orchestrate the analysis, detect streams, delegate to sub-agents, and synthesize the final blueprint
+- `architect.agent` is the main agent that will orchestrate the analysis, detect streams, delegate to sub-agents, and synthesize the final blueprint
 - Let the skill auto-detect streams (Frontend / Backend / Data)
 - Allow delegation to `frontend-analyst`, `backend-analyst`, and `data-analyst` sub-agents as needed
 
