@@ -9,6 +9,7 @@ A set of GitHub Copilot custom agents and skills that automatically analyze any 
 Point the agent at any public GitHub repository and it will:
 
 - Detect technology streams present (Frontend, Backend, Data)
+- Pre-filled prompt available in `analyze-repo-architecture`. More details find under Usage section
 - Delegate deep analysis to specialist sub-agents per stream
 - Synthesize the results into a unified [`docs/architecture.md`](docs/architecture.md)
 - Generate Mermaid component diagrams, sequence diagrams, and ER diagrams
