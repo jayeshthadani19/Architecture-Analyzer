@@ -1,4 +1,5 @@
 import express from "express";
+import { rateLimit } from "express-rate-limit";
 import {
   createAckEvent,
   createTextEvent,
@@ -17,6 +18,14 @@ const app = express();
 
 app.use(express.text({ type: "*/*" }));
 
+// Rate-limit the POST endpoint: at most 30 requests per minute per IP
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Health-check endpoint
 app.get("/", (_req, res) => {
   res.send("Architecture Analyzer Copilot Extension is running.");
@@ -26,7 +35,7 @@ app.get("/", (_req, res) => {
  * Main Copilot Extension endpoint.
  * GitHub Copilot sends POST requests here for every chat interaction.
  */
-app.post("/", async (req, res) => {
+app.post("/", limiter, async (req, res) => {
   const signature = req.headers["github-public-key-signature"] as string;
   const keyId = req.headers["github-public-key-identifier"] as string;
   const tokenHeader = req.headers["x-github-token"] as string | undefined;
@@ -114,9 +123,25 @@ app.post("/", async (req, res) => {
   const userPrompt = buildAnalysisPrompt(repoInfo, fileContext, scope);
 
   // --- Call the Copilot LLM ---
+  if (!tokenHeader) {
+    res.write(
+      createErrorsEvent([
+        {
+          type: "agent",
+          code: "MISSING_TOKEN",
+          message: "GitHub token is required to call the Copilot LLM. Ensure the extension has the necessary permissions.",
+          identifier: "prompt",
+        },
+      ]),
+    );
+    res.write(createDoneEvent());
+    res.end();
+    return;
+  }
+
   try {
     const response = await prompt(userPrompt, {
-      token: tokenHeader ?? "",
+      token: tokenHeader,
       model: "gpt-4o",
       messages: [
         { role: "system", content: systemPrompt },

@@ -16,6 +16,12 @@ export interface DirectoryEntry {
   size?: number;
 }
 
+/** Maximum number of tree entries to include in the structure summary. */
+const MAX_STRUCTURE_ENTRIES = 500;
+
+/** Maximum number of bytes to read from a single file (8 KB). */
+const MAX_FILE_CONTENT_SIZE = 8192;
+
 /**
  * Key configuration / metadata files we try to fetch to understand
  * the technology stack and architecture of a repository.
@@ -71,7 +77,7 @@ export async function fetchRepoInfo(
         size: item.size,
       }))
       // Limit to avoid overwhelming the LLM context
-      .slice(0, 500);
+      .slice(0, MAX_STRUCTURE_ENTRIES);
   } catch {
     // Tree may be truncated for very large repos — that's okay
   }
@@ -106,8 +112,8 @@ export async function fetchFileContent(
 
     // GitHub returns base64-encoded content
     const content = Buffer.from(data.content, "base64").toString("utf-8");
-    // Cap at 8 KB to stay within reasonable LLM context limits
-    return content.slice(0, 8192);
+    // Cap at MAX_FILE_CONTENT_SIZE to stay within reasonable LLM context limits
+    return content.slice(0, MAX_FILE_CONTENT_SIZE);
   } catch {
     return null;
   }

@@ -1,7 +1,7 @@
 {
   "name": "architecture-analyzer",
   "version": "1.0.0",
-  "description": "Agents to analyse existing codebase &amp; architecture",
+  "description": "GitHub Copilot Extension: analyze existing codebase & architecture",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
@@ -24,7 +24,8 @@
   "dependencies": {
     "@copilot-extensions/preview-sdk": "^5.0.1",
     "@octokit/rest": "^22.0.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

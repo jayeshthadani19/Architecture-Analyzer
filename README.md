@@ -1,6 +1,6 @@
 # Architecture-Analyzer
 
-A **GitHub Copilot Extension** that analyses the architecture of any public GitHub repository and explains its design, technology stack, and key components.
+A **GitHub Copilot Extension** that analyzes the architecture of any public GitHub repository and explains its design, technology stack, and key components.
 
 ## Usage
 
@@ -8,9 +8,9 @@ Type the following in any GitHub Copilot Chat that has this extension enabled:
 
 | Command | Description |
 |---|---|
-| `/analyze-repo-architecture` | Analyse the default repository (`dotnet/eShop`) |
-| `/analyze-repo-architecture https://github.com/owner/repo` | Analyse a specific repository |
-| `/analyze-repo-architecture https://github.com/owner/repo backend only` | Analyse a specific repository, focusing on a scope |
+| `/analyze-repo-architecture` | Analyze the default repository (`dotnet/eShop`) |
+| `/analyze-repo-architecture https://github.com/owner/repo` | Analyze a specific repository |
+| `/analyze-repo-architecture https://github.com/owner/repo backend only` | Analyze a specific repository, focusing on a scope |
 
 ### Examples
 

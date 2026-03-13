@@ -5,7 +5,7 @@ import type { RepoInfo } from "./fetchRepo.js";
  */
 export function buildSystemPrompt(): string {
   return `You are an expert software architect. When given information about a \
-GitHub repository, you analyse and describe its architecture clearly and concisely.
+GitHub repository, you analyze and describe its architecture clearly and concisely.
 
 Your analysis should cover:
 1. **Overview** – what the project does and its primary purpose
